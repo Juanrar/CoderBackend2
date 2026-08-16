@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { registerUser, loginUser } from '../controllers/session.controllers.js';
+import { register, login } from '../controllers/session.controllers.js';
+import { userExists } from '../middlewares/session.middlewares.js';
 
 const router = Router();
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
+router.post('/register', register);
+router.post('/login', userExists ,login);
 
 export default router;
