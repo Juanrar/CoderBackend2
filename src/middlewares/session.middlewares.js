@@ -12,28 +12,19 @@ export async function userExists(req, res, next) {
     next()
 }
 
-export async function verifyToken(req, res, next){
-    const authHeader = req.headers.authorization;
-    if(!authHeader || !authHeader.startsWith('Bearer ')){
-        return res.status(401).json({ message: 'Token no proporcionado' });
-    }
-
-    const token = authHeader.split(' ')[1];
-    try{
-        const decoded = jwt.verify(token, env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    }catch(error){
-        return res.status(401).json({ message: 'Token inválido' });
-    }
-}
-
 export const authMiddleware = (req, res, next) => {
     try{
-        const token = req.cookies.authToken;
+        const authHeader = req.headers.authorization;
+        let token;
         
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            token = authHeader.split(' ')[1];
+        }else if (req.cookies && req.cookies.authToken) {
+            token = req.cookies.authToken;
+        }
+
         if(!token){
-            return res.status(401).json({ message: 'No autenticado' });
+            return res.status(401).json({ message: 'Token no proporcionado' });
         }
 
         const decoded = jwt.verify(token, env.JWT_SECRET);
