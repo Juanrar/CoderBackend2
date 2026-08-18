@@ -27,3 +27,19 @@ export async function verifyToken(req, res, next){
         return res.status(401).json({ message: 'Token inválido' });
     }
 }
+
+export const authMiddleware = (req, res, next) => {
+    try{
+        const token = req.cookies.authToken;
+        
+        if(!token){
+            return res.status(401).json({ message: 'No autenticado' });
+        }
+
+        const decoded = jwt.verify(token, env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    }catch(error){
+        return res.status(401).json({ message: 'Token inválido' });
+    }
+}

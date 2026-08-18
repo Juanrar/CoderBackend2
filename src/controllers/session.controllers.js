@@ -33,6 +33,7 @@ export async function login(req, res, next) {
         const { password } = req.body;
         if(isValidPassword(password, user.password)){
              const sessionData = {
+                id: user._id,
                 email: user.email,
                 role: user.role
             }
@@ -51,4 +52,13 @@ export async function login(req, res, next) {
     }catch(error){
         res.status(401).json({error: error.message });
     }
+}
+
+export async function logout(req, res, next){
+    res.clearCookie('authToken');
+    res.status(200).json({ message: 'Cierre de sesión exitoso' });
+}
+
+export async function getCurrentUser(req, res, next){
+    res.status(200).json({ message: 'Usuario autenticado', user: req.user });
 }
