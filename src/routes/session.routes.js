@@ -7,7 +7,7 @@ const router = Router();
 
 router.post('/register', passport.authenticate('register', { session: false }), register);
 router.post('/login', passport.authenticate('login', {session: false }) ,login);
-router.post('/logout', authMiddleware, logout);
-router.get('/current', authMiddleware, getCurrentUser);
+router.post('/logout', passport.authenticate('current', { session: false}), logout);
+router.get('/current', passport.authenticate('current', { session: false}), getCurrentUser);
 
 export default router;

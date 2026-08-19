@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as JWTStrategy } from 'passport-jwt';
 import { createHash, isValidPassword } from '../utils.js';
 import UserModel from '../models/user.model.js';
 
@@ -56,7 +57,31 @@ async function loginCallback(req, username, password, done){
     }
 }
 
+const jwtConfig = {
+    jwtFromRequest: (req) =>{
+        let token = null;
+        if(req && req.cookies){
+            token = req.cookies.authToken;
+        }
+        return token;
+    },
+    secretOrKey: process.env.JWT_SECRET
+}
+
+async function jwtCallback(jwt_payload, done){
+    try{
+        const user = await UserModel.findById(jwt_payload.id).select('-password');
+        if(!user){
+            return done(null, false, { message: 'Usuario no encontrado' });
+        }
+        return done(null, user);
+    }catch(error){
+        done(error.message, false);
+    }
+}
+
 export function initializePassport(){
     passport.use("register", new LocalStrategy( registerConfig, registerCallback));
     passport.use("login", new LocalStrategy( loginConfig, loginCallback));
+    passport.use("current", new JWTStrategy( jwtConfig, jwtCallback));
 }
