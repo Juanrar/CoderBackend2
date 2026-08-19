@@ -18,7 +18,8 @@ async function registerCallback(req, username, password, done){
             email: username,
             password: hashedPassword,
             first_name,
-            last_name
+            last_name,
+            role: 'user'
         });
         return done(null, newUser);
     }catch(error){
@@ -30,6 +31,32 @@ async function registerCallback(req, username, password, done){
     }
 }
 
+const loginConfig = {
+    usernameField: "email",
+    passwordField: "password",
+    session: false
+}
+
+async function loginCallback(req, username, password, done){
+    try{
+        const normalizedUsername = username.toLowerCase().trim();
+        const user = await UserModel.findOne({ email: normalizedUsername });
+        if(!user){
+            return done(null, false, { message: 'Credenciales invalidas' });
+        }
+
+        const passwordIsValid = await isValidPassword(password, user.password);
+        if(!passwordIsValid){
+            return done(null, false, { message: 'Credenciales invalidas' });
+        }
+
+        return done(null, user);
+    }catch(error){
+        return done(error.message, false);
+    }
+}
+
 export function initializePassport(){
     passport.use("register", new LocalStrategy( registerConfig, registerCallback));
+    passport.use("login", new LocalStrategy( loginConfig, loginCallback));
 }

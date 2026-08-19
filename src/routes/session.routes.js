@@ -6,7 +6,7 @@ import passport from 'passport';
 const router = Router();
 
 router.post('/register', passport.authenticate('register', { session: false }), register);
-router.post('/login', userExists ,login);
+router.post('/login', passport.authenticate('login', {session: false }) ,login);
 router.post('/logout', authMiddleware, logout);
 router.get('/current', authMiddleware, getCurrentUser);
 
