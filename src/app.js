@@ -6,8 +6,11 @@ import sessionsRouter from './routes/session.routes.js'
 import eventsRouter from './routes/event.routes.js'
 import ticketsRouter from './routes/ticket.routes.js'
 import cookieParser from 'cookie-parser'
+import {initializePassport} from './config/passport.js'
 
 const app = express()
+
+initializePassport()
 
 app.use(cookieParser())
 app.use(express.json())
