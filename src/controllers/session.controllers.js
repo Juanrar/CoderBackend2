@@ -6,7 +6,12 @@ import jwt from 'jsonwebtoken';
 
 
 export async function register(req, res, next) {
-    res.status(201).json({ message: 'Usuario registrado exitosamente', user: req.user });
+    const sessionData = {
+        id: req.user._id,
+        email: req.user.email,
+        role: req.user.role
+    };
+    res.status(201).json({ message: 'Usuario registrado exitosamente', user: sessionData });
 }
 
 export async function login(req, res, next) {
