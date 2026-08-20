@@ -38,7 +38,7 @@ const loginConfig = {
     session: false
 }
 
-async function loginCallback(req, username, password, done){
+async function loginCallback( username, password, done){
     try{
         const normalizedUsername = username.toLowerCase().trim();
         const user = await UserModel.findOne({ email: normalizedUsername });
@@ -76,7 +76,7 @@ async function jwtCallback(jwt_payload, done){
         }
         return done(null, user);
     }catch(error){
-        done(error.message, false);
+        return done(error.message, false);
     }
 }
 
