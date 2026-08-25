@@ -1,4 +1,6 @@
 import { Schema, model } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
+
 
 const eventSchema = new Schema({
     name: String,
@@ -18,8 +20,10 @@ const eventSchema = new Schema({
     },
     category: {
         type: String,
-        required: true 
+        required: true
     }
 })
+
+eventSchema.plugin(mongoosePaginate);
 
 export default model('Event', eventSchema);

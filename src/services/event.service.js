@@ -4,6 +4,14 @@ import eventModel from '../models/event.model.js';
 export async function createEventService(req) {
     const { name, date, place, price, capacity, status, category } = req.body;
 
+    const now = new Date();
+
+    if (date <= now) throw new Error("La fecha del evento debe ser mayor a la fecha actual.");
+    if (price < 0) throw new Error("El precio debe ser mayor a 0.");
+    if (capacity <= 0) throw new Error("La capacidad debe ser mayor a 0.");
+    if (status == 'cancelled' || status == 'finished') throw new Error("El estado del evento no es valido.");
+
+
     const { _id } = await userModel.findOne({ email: req.user.email });
 
     const event = await eventModel.create({
@@ -21,14 +29,21 @@ export async function createEventService(req) {
 }
 
 export async function getEventService(query = {}) {
-    const { category, status, location } = query;
+    const { category, status, location, limit = 10, page = 1, sort } = query;
 
     let filter = {}
     if (category) filter.category = category;
     if (status) filter.status = status;
     if (location) filter.place = location;
 
-    const events = await eventModel.find(filter).populate('organizer', 'first_name last_name');
+    const options = {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        sort: sort ? { date: sort === 'asc' ? 1 : -1 } : { date: 1 },
+        populate: { path: 'organizer', select: 'first_name last_name' }
+    }
+
+    const events = await eventModel.paginate(filter, options);
     return events
 }
 
