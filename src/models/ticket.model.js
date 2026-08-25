@@ -20,7 +20,10 @@ const ticketSchema = new Schema({
         min: 1
     },
     code: String,
-    cearteAt: Date
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 })
 
 export default model('Ticket', ticketSchema);

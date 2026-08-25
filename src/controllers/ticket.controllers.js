@@ -1,4 +1,4 @@
-import { createTicketService } from '../services/ticket.service.js'
+import { createTicketService, getMyTicketsService } from '../services/ticket.service.js'
 
 
 export async function createTicket(req, res, next) {
@@ -15,6 +15,15 @@ export async function getTicketById(req, res, next) {
 
     } catch (error) {
 
+    }
+}
+
+export async function getMyTickets(req, res, next) {
+    try {
+        const tickets = await getMyTicketsService(req);
+        res.status(200).json({ message: 'Tickets obtenidos exitosamente', data: tickets });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener los tickets', error: error.message });
     }
 }
 
