@@ -8,7 +8,19 @@ const ticketSchema = new Schema({
     event: {
         type: Types.ObjectId,
         ref: 'Event',
-    }
+    },
+    status: {
+        type: String,
+        enum: ['active', 'used', 'cancelled'],
+        default: 'active'
+    },
+    quantity: {
+        type: Number,
+        default: 1,
+        min: 1
+    },
+    code: String,
+    cearteAt: Date
 })
 
 export default model('Ticket', ticketSchema);
