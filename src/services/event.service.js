@@ -1,5 +1,7 @@
 import userModel from '../models/user.model.js';
-import eventModel from '../models/event.model.js';
+import { EventRepository } from '../repository/event.repository.js';
+
+const eventRepository = new EventRepository();
 
 export async function createEventService(req) {
     const { name, date, place, price, capacity, status, category } = req.body;
@@ -14,7 +16,7 @@ export async function createEventService(req) {
 
     const { _id } = await userModel.findOne({ email: req.user.email });
 
-    const event = await eventModel.create({
+    const event = await eventRepository.createEvent({
         name: name,
         date: date,
         place: place,
