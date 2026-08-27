@@ -1,9 +1,9 @@
-import eventModel from "../models/event.model.js"
+import EventModel from "../models/event.model.js"
 
-export class EventDao {
+export class EventDAO {
 
     async getById(id) {
-        return await eventModel.findById(id).lean();
+        return await EventModel.findById(id).lean();
     }
 
     async create(data) {
@@ -16,6 +16,10 @@ export class EventDao {
 
     async delete(id) {
         return await EventModel.findByIdAndDelete(id);
+    }
+
+    async paginate(filter, options){
+        return await EventModel.paginate(filter, options);
     }
 
 }

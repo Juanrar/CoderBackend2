@@ -1,7 +1,9 @@
 import userModel from '../models/user.model.js';
 import { EventRepository } from '../repository/event.repository.js';
+import { UserRepository } from '../repository/user.repository.js'
 
 const eventRepository = new EventRepository();
+const userRepository = new UserRepository();
 
 export async function createEventService(req) {
     const { name, date, place, price, capacity, status, category } = req.body;
@@ -14,7 +16,7 @@ export async function createEventService(req) {
     if (status == 'cancelled' || status == 'finished') throw new Error("El estado del evento no es valido.");
 
 
-    const { _id } = await userModel.findOne({ email: req.user.email });
+    const { _id } = await userRepository.getUserByEmail({ email: req.user.email });
 
     const event = await eventRepository.createEvent({
         name: name,
@@ -45,7 +47,7 @@ export async function getEventService(query = {}) {
         populate: { path: 'organizer', select: 'first_name last_name' }
     }
 
-    const events = await eventModel.paginate(filter, options);
+    const events = await eventRepository.eventPaginate(filter, options);
     return events
 }
 
