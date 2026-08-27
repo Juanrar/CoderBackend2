@@ -15,11 +15,13 @@ export class EventDAO {
     }
 
     async delete(id) {
-        return await EventModel.findByIdAndDelete(id);
+        return await EventModel.findByIdAndDelete(id).populate('organizer', 'first_name last_name');
     }
 
     async paginate(filter, options){
         return await EventModel.paginate(filter, options);
     }
+
+    
 
 }

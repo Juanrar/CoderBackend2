@@ -20,6 +20,7 @@ export class EventRepository {
     }
 
     async eventPaginate(filter, options){
-        return eventDao.paginate(filter,options);
+        return eventDAO.paginate(filter,options);
     }
+
 }
