@@ -3,9 +3,10 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 
 const eventSchema = new Schema({
-    name: String,
+    title: String,
     date: Date,
-    place: String,
+    location: String,
+    description: String,
     price: Number,
     capacity: Number,
     status: {
