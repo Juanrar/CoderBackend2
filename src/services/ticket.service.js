@@ -8,7 +8,8 @@ const eventRepository = new EventRepository();
 const ticketRepository = new TicketRepository();
 
 export async function createTicketService(req) {
-    const { eventId, quantity = 1 } = req.body;
+    const { quantity = 1 } = req.body;
+    const eventId = req.params.eid;
     const user = req.user;
     const userId = user._id;
 

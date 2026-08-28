@@ -18,6 +18,14 @@ export async function getTicketById(req, res, next) {
     }
 }
 
+export async function getAllTickets(req, res, next){
+    try {
+
+    } catch (error){
+        res.status(500).json({ message: "Error al obtener los tickets", error: error.message });
+    }
+}
+
 export async function getMyTickets(req, res, next) {
     try {
         const tickets = await getMyTicketsService(req);
