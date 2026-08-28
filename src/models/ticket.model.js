@@ -19,7 +19,7 @@ const ticketSchema = new Schema({
         default: 1,
         min: 1
     },
-    code: String,
+    reservationCode: String,
     createdAt: {
         type: Date,
         default: Date.now

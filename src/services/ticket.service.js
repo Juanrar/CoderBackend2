@@ -28,22 +28,7 @@ export async function createTicketService(req) {
 
     if (existingTicket) throw new Error("Ya tenes una inscripcion activa para este evento");
 
-    const result = await ticketModel.aggregate([
-        {
-            $match: {
-                event: event._id,
-                status: "active"
-            }
-        },
-        {
-            $group: {
-                _id: "$event",
-                totalReserver: {
-                    $sum: '$quantity'
-                }
-            }
-        }
-    ]);
+    const result = await ticketRepository.getReservedQuantity(event._id);
 
     const reserved = result[0]?.totalReserver || 0;
     const available = event.capacity - reserved;
@@ -52,11 +37,11 @@ export async function createTicketService(req) {
 
     const ticketCode = generateTicketCode();
 
-    const ticket = await ticketModel.create({
+    const ticket = await ticketRepository.createTicket({
         user: userId,
         event: event._id,
         quantity,
-        code: ticketCode,
+        reservationCode: ticketCode,
         status: 'active'
     });
 
@@ -65,7 +50,7 @@ export async function createTicketService(req) {
             to: user.email,
             userName: user.first_name || user.email,
             eventTitle: event.title,
-            ticketCode: ticket.code
+            ticketCode: ticket.reservationCode
         });
     } catch (mailError) {
         console.error("Error al enviar email de confirmación:", mailError.message);
