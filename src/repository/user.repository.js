@@ -8,7 +8,7 @@ export class UserRepository {
     }
 
     async getUserById(userId){
-        return userDAO.getUserById(userId).select('-password');
+        return userDAO.getUserById(userId);
     }
 
     async createUser(data){
