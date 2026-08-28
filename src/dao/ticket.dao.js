@@ -49,7 +49,7 @@ export class TicketDAO {
         return await TicketModel.findById(id);
     }
 
-    async update(id, date){
+    async update(id, data){
         return await TicketModel.findByIdAndUpdate(id, data, { new: true });
     }
 }
