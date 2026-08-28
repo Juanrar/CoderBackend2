@@ -23,7 +23,7 @@ export const authorizeEventOwnerOrAdmin = async (req, res, next) => {
     }
 
     const isAdmin = req.user.role === 'admin';
-    const isOwner = event.owner.toString() === req.user._id.toString();
+    const isOwner = event.organizer.toString() === req.user._id.toString();
 
     if (!isAdmin && !isOwner) {
         return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });

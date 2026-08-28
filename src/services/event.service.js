@@ -4,7 +4,7 @@ import { UserRepository } from '../repository/user.repository.js'
 const eventRepository = new EventRepository();
 const userRepository = new UserRepository();
 
-export async function createEventService(eventData, userEmail) {
+export async function createEventService(eventData, organizerId) {
     const { title, date, location, price, capacity, status, category } = eventData;
 
     const now = new Date();
@@ -21,7 +21,7 @@ export async function createEventService(eventData, userEmail) {
         price: price,
         capacity: capacity,
         status: status,
-        organizer: req.user._id,
+        organizer: organizerId,
         category: category
     })
 

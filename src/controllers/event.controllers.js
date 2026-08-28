@@ -3,7 +3,7 @@ import { EventDTO } from '../dto/index.js'
 
 export async function createEvent(req, res, next) {
     try {
-        const event = await createEventService(req.body, req.user.email);
+        const event = await createEventService(req.body, req.user._id);
         res.status(201).json({ message: 'Evento creado exitosamente', event: event });
     } catch (error) {
         res.status(500).json({ message: 'Error al crear el evento', error: error.message });
