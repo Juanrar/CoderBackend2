@@ -1,5 +1,5 @@
-import { createTicketService, getMyTicketsService } from '../services/ticket.service.js'
-
+import { createTicketService, getMyTicketsService, getTicketsByEventService } from '../services/ticket.service.js'
+import { TicketDAO, TicketDTO } from '../dto/index.js'
 
 export async function createTicket(req, res, next) {
     try {
@@ -20,7 +20,10 @@ export async function getTicketById(req, res, next) {
 
 export async function getAllTickets(req, res, next){
     try {
+        const tickets = await getTicketsByEventService(req);
+        const formattedTickets = tickets.map(ticket => TicketDTO(ticket));
 
+        res.status(200).json({ status: 'Tickets obtenidos exitosamente', tickets: formattedTickets});
     } catch (error){
         res.status(500).json({ message: "Error al obtener los tickets", error: error.message });
     }

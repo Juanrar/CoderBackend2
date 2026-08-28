@@ -1,3 +1,4 @@
+import ticketModel from '../models/ticket.model.js'
 import TicketModel from '../models/ticket.model.js'
 
 export class TicketDAO {
@@ -38,5 +39,9 @@ export class TicketDAO {
         return await TicketModel.find({
                 user: userId,
             }).populate('event');
+    }
+
+    async getTicketsByEventId(eventId){
+        return await TicketModel.find({event: eventId}).populate('user', 'first_name last_name email');
     }
 }

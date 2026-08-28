@@ -18,4 +18,8 @@ export class TicketRepository {
     async getTicketByUser(userId){
         return ticketDAO.getTicketByUserId(userId);
     }
+
+    async getTicketsByEvent(eventId){
+        return ticketDAO.getTicketsByEventId(eventId);
+    }
 }

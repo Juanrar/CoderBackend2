@@ -1,4 +1,3 @@
-import ticketModel from '../models/ticket.model.js';
 import { generateTicketCode } from '../utils.js';
 import { sendTicketConfirmationEmail } from './nodemailer.service.js';
 import { EventRepository } from '../repository/event.repository.js';
@@ -63,8 +62,14 @@ export async function createTicketService(req) {
 export async function getMyTicketsService(req) {
     const userId = req.user._id;
     const tickets = await ticketRepository.getTicketByUser(userId);
+    
     return tickets;
+}
 
+export async function getTicketsByEventService(req) {
+    const eventId = req.params.eid;
+    const tickets = await ticketRepository.getTicketsByEvent(eventId);
+    return tickets;
 }
 
 export async function updateTicketByIdService() {
