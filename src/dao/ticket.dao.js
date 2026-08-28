@@ -35,7 +35,7 @@ export class TicketDAO {
         return await TicketModel.create(data)
     }
 
-    async getTicketByUserId(userId){
+    async getByUserId(userId){
         return await TicketModel.find({
                 user: userId,
             }).populate('event');
@@ -43,5 +43,13 @@ export class TicketDAO {
 
     async getTicketsByEventId(eventId){
         return await TicketModel.find({event: eventId}).populate('user', 'first_name last_name email');
+    }
+
+    async getById(id){
+        return await TicketModel.findById(id);
+    }
+
+    async update(id, date){
+        return await TicketModel.findByIdAndUpdate(id, data, { new: true });
     }
 }

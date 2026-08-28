@@ -22,4 +22,12 @@ export class TicketRepository {
     async getTicketsByEvent(eventId){
         return ticketDAO.getTicketsByEventId(eventId);
     }
+
+    async getTicketById(id) {
+        return ticketDAO.getById(id);
+    }
+
+    async updateTicket(id, data) {
+        return ticketDAO.update(id, data);
+    }
 }

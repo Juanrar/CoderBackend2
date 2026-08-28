@@ -77,7 +77,24 @@ export async function updateTicketByIdService() {
 }
 
 export async function cancelTicketByIdService() {
+    const ticketId = req.params.tid;
+    const userId = req.user._id;
+    const isAdmin = req.user.role === 'admin';
 
+    const ticket = await ticketRepository.getTicketById(ticketId);
+    
+    if (ticket.status === 'cancelled') throw new Error("El ticket ya se encuentra cancelado");
+
+    if (ticket.user.toString() !== userId.toString() && !isAdmin) {
+        throw new Error("No tienes permiso para cancelar este ticket");
+    }
+
+    const updatedTicket = await ticketRepository.updateTicket(ticketId, {
+        status: 'cancelled',
+        cancelledAt: new Date()
+    });
+
+    return updatedTicket;
 }
 
 export async function useTicketByIdService() {
