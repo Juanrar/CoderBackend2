@@ -1,8 +1,11 @@
 import ticketModel from '../models/ticket.model.js';
-import eventModel from '../models/event.model.js';
-import userModel from '../models/user.model.js';
 import { generateTicketCode } from '../utils.js';
 import { sendTicketConfirmationEmail } from './nodemailer.service.js';
+import { EventRepository } from '../repository/event.repository.js';
+import { TicketRepository } from '../repository/ticket.repocitory.js';
+
+const eventRepository = new EventRepository();
+const ticketRepository = new TicketRepository();
 
 export async function createTicketService(req) {
     const { eventId, quantity = 1 } = req.body;
@@ -11,13 +14,13 @@ export async function createTicketService(req) {
 
     if (quantity <= 0) throw new Error("La cantidad tiene que ser mayor a uno");
 
-    const event = await eventModel.findById(eventId);
+    const event = await eventRepository.getEventById(eventId);
 
     if (!event) throw new Error("Evento no encontrado");
     if (event.status !== 'published') throw new Error("El evento no esta disponible para inscribirse");
     if (event.date <= new Date()) throw new Error("No es posible inscribirse a un evento finalizado");
 
-    const existingTicket = await ticketModel.findOne({
+    const existingTicket = await ticketRepository.getActiveTicketByUserAndEvent({
         user: userId,
         event: event._id,
         status: 'active'
@@ -73,10 +76,7 @@ export async function createTicketService(req) {
 
 export async function getMyTicketsService(req) {
     const userId = req.user._id;
-    const tickets = await ticketModel.find({
-        user: userId,
-    }).populate('event');
-
+    const tickets = await ticketRepository.getTicketByUser(userId);
     return tickets;
 
 }

@@ -33,4 +33,10 @@ export class TicketDAO {
     async create(data) {
         return TicketModel.create(data)
     }
+
+    async getTicketByUserId(userId){
+        await ticketModel.find({
+                user: userId,
+            }).populate('event');
+    }
 }
