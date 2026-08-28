@@ -64,7 +64,7 @@ export async function createTicketService(req) {
         await sendTicketConfirmationEmail({
             to: user.email,
             userName: user.first_name || user.email,
-            eventTitle: event.name,
+            eventTitle: event.title,
             ticketCode: ticket.code
         });
     } catch (mailError) {
