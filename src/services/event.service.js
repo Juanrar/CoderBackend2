@@ -1,8 +1,6 @@
 import { EventRepository } from '../repository/event.repository.js';
-import { UserRepository } from '../repository/user.repository.js'
 
 const eventRepository = new EventRepository();
-const userRepository = new UserRepository();
 
 export async function createEventService(eventData, organizerId) {
     const { title, date, location, price, capacity, status, category } = eventData;

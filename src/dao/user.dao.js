@@ -4,4 +4,8 @@ export class UserDAO{
     async getUserByEmail(email){
         return await userModel.findOne(email)
     }
+
+    async create(data){
+        return await userModel.create(data);
+    }
 }

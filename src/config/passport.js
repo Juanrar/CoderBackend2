@@ -3,6 +3,9 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JWTStrategy } from 'passport-jwt';
 import { createHash, isValidPassword } from '../utils.js';
 import UserModel from '../models/user.model.js';
+import { UserRepository } from '../repository/user.repository.js'
+
+const userRepository = new UserRepository();
 
 const registerConfig = {
     usernameField: "email",
@@ -15,7 +18,8 @@ async function registerCallback(req, username, password, done){
     try{
         const { first_name, last_name } = req.body;
         const hashedPassword = await createHash(password);
-        const newUser = await UserModel.create({
+
+        const newUser = await userRepository.createUser({
             email: username,
             password: hashedPassword,
             first_name,
