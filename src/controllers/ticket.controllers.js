@@ -48,7 +48,7 @@ export async function updateTicketById(req, res, next) {
 
 export async function cancelTicketById(req, res, next) {
     try {
-        const tickets = await getMyTicketsService(req);
+        const tickets = await cancelTicketByIdService(req);
         res.status(200).json({ message: 'Tickets obtenidos exitosamente', data: tickets });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener los tickets', error: error.message });
