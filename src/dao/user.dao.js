@@ -2,11 +2,11 @@ import userModel from "../models/user.model.js"
 
 export class UserDAO{
     async getUserByEmail(email){
-        return await userModel.findOne(email);
+        return await userModel.findOne({ email });
     }
 
     async getUserById(userId){
-         return await userModel.findById(userId);
+         return await userModel.findById(userId).select('-password');
     }
 
     async create(data){
