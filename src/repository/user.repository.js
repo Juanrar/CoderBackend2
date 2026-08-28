@@ -7,6 +7,10 @@ export class UserRepository {
         return userDAO.getUserByEmail(email);
     }
 
+    async getUserById(userId){
+        return userDAO.getUserById(userId).select('-password');
+    }
+
     async createUser(data){
         return userDAO.create(data);
     }

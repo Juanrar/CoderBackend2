@@ -2,7 +2,6 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JWTStrategy } from 'passport-jwt';
 import { createHash, isValidPassword } from '../utils.js';
-import UserModel from '../models/user.model.js';
 import { UserRepository } from '../repository/user.repository.js'
 
 const userRepository = new UserRepository();
@@ -45,7 +44,7 @@ const loginConfig = {
 async function loginCallback( username, password, done){
     try{
         const normalizedUsername = username.toLowerCase().trim();
-        const user = await UserModel.findOne({ email: normalizedUsername });
+        const user = await userRepository.getUserByEmail( normalizedUsername );
         if(!user){
             return done(null, false, { message: 'Credenciales invalidas' });
         }
@@ -74,7 +73,7 @@ const jwtConfig = {
 
 async function jwtCallback(jwt_payload, done){
     try{
-        const user = await UserModel.findById(jwt_payload.id).select('-password');
+        const user = await userRepository.getUserById(jwt_payload.id);
         if(!user){
             return done(null, false, { message: 'Usuario no encontrado' });
         }
