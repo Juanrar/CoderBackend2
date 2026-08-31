@@ -1,4 +1,5 @@
 import { EventRepository } from '../repository/event.repository.js';
+import { createError } from '../utils.js';
 
 const eventRepository = new EventRepository();
 
@@ -61,7 +62,7 @@ export async function getEventService(query = {}) {
 
 export async function getEventByIdService(eventId) {
     const event = await eventRepository.getEventById(eventId);
-    if (event == null) throw new Error("Evento no encontrado");
+    if (event == null) throw createError("Evento no encontrado", 404);
     return event
 }
 
@@ -86,7 +87,7 @@ export async function updateEventByIdService(eventId, updateData) {
 
 export async function deleteEventByIdService(eventId) {
     const event = await eventRepository.deleteEvent(eventId);
-    if (event == null) throw new Error("Evento no encontrado");
+    if (event == null) throw createError("Evento no encontrado", 404);
     return event
 }
 

@@ -18,3 +18,10 @@ export function generateTicketCode(prefix = 'TCK') {
     const cleanCode = hashed.replace(/[^a-zA-Z0-9]/g, '').slice(-8).toUpperCase();
     return `${prefix}-${cleanCode}`;
 }
+
+export function createError(message, statusCode) {
+    const error = new Error(message);
+    error.statusCode = statusCode;
+    Error.captureStackTrace(error, createError);
+    return error;
+}

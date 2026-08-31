@@ -7,6 +7,8 @@ import eventsRouter from './routes/event.routes.js'
 import ticketsRouter from './routes/ticket.routes.js'
 import cookieParser from 'cookie-parser'
 import {initializePassport} from './config/passport.js'
+import { errorHandler } from './middlewares/error.middlewares.js'
+
 
 const app = express()
 
@@ -20,6 +22,8 @@ app.use('/api/users', usersRouter)
 app.use('/api/sessions', sessionsRouter)
 app.use('/api/events', eventsRouter)
 app.use('/api/tickets', ticketsRouter)
+
+app.use(errorHandler)
 
 app.listen(env.PORT, () => {
     connectDB()
