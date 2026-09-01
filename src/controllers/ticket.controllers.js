@@ -1,5 +1,5 @@
 import { createTicketService, getMyTicketsService, getTicketsByEventService } from '../services/ticket.service.js'
-import { TicketDAO, TicketDTO } from '../dto/index.js'
+import { TicketDTO } from '../dto/index.js'
 
 export async function createTicket(req, res, next) {
     try {
