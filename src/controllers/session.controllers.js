@@ -4,7 +4,7 @@ import { UserDTO } from '../dto/index.js';
 
 
 export async function register(req, res, next) {
-    res.status(201).json({ message: 'Usuario registrado exitosamente', user: new UserDTO(req.user) });
+    res.status(201).json({status:'success', message: 'Usuario registrado exitosamente', payload: new UserDTO(req.user) });
 }
 
 export async function login(req, res, next) {
@@ -23,7 +23,7 @@ export async function login(req, res, next) {
             sameSite: 'lax',
             maxAge: env.JWT_COOKIE_EXPIRES_IN * 1000
         })
-        res.status(200).json({ message: 'Inicio de sesión exitoso', token: new UserDTO(req.user) });
+        res.status(200).json({ status: 'success', message: 'Inicio de sesión exitoso', payload: new UserDTO(req.user) });
     } catch (error) {
         next(error);
     }
@@ -35,9 +35,9 @@ export async function logout(req, res, next) {
         secure: env.NODE_ENV === 'production',
         sameSite: 'lax'
     });
-    res.status(200).json({ message: 'Cierre de sesión exitoso' });
+    res.status(200).json({status:'success', message: 'Cierre de sesión exitoso' });
 }
 
 export async function getCurrentUser(req, res, next) {
-    res.status(200).json({ message: 'Usuario autenticado', user: new UserDTO(req.user) });
+    res.status(200).json({status:'success', message: 'Usuario autenticado', payload: new UserDTO(req.user) });
 }
