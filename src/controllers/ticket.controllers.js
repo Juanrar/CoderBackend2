@@ -58,7 +58,7 @@ export async function cancelTicketById(req, res, next) {
 export async function getTicketById(req, res , next){
     try{
         const ticket = await getTicketByIdService(req);
-        res.status(200).json({ status: 'succes', message:"Usuario obtenido exitosamente", payload: new TicketDTO(ticket)});
+        res.status(200).json({ status: 'success', message:"Ticket obtenido exitosamente", payload: new TicketDTO(ticket)});
     }catch (error){
         next(error);
     }

@@ -16,7 +16,7 @@ export async function getEvents(req, res, next) {
 
         res.status(200).json({
             status: 'success',
-            payload: events.map(event => new EventDTO(event)),
+            data: events.map(event => new EventDTO(event)),
             page,
             limit,
             total,
