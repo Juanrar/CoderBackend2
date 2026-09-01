@@ -64,20 +64,15 @@ export async function getTicketsByEventService(req) {
     return tickets;
 }
 
-export async function updateTicketByIdService() {
-
-}
-
 export async function cancelTicketByIdService(req) {
     const ticketId = req.params.tid;
     const userId = req.user._id;
     const isAdmin = req.user.role === 'admin';
 
     const ticket = await ticketRepository.getTicketById(ticketId);
-    
-    if (!ticket) throw createError("Ticket no encontrado", 404);
-    if (ticket.status === 'cancelled') throw createError("El ticket ya se encuentra cancelado", 409);
 
+    if (!ticket) throw createError("Ticket no encontrado", 404);
+    
     if (ticket.user.toString() !== userId.toString() && !isAdmin) {
         throw createError("No tenés permiso para cancelar este ticket", 403);
     }
@@ -92,6 +87,18 @@ export async function cancelTicketByIdService(req) {
     return updatedTicket;
 }
 
-export async function useTicketByIdService() {
+export async function getTicketByIdService(req) {
+    const ticketId = req.params.tid;
+    const userId = req.user._id;
+    const isAdmin = req.user.role === 'admin';
 
+    const ticket = await ticketRepository.getTicketById(ticketId);
+
+    if (!ticket) throw createError("Ticket no encontrado", 404);
+
+    if (ticket.user.toString() !== userId.toString() && !isAdmin) {
+        throw createError("No tenés permiso para ver este ticket", 403);
+    }
+
+    return ticket;
 }
