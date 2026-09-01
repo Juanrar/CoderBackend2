@@ -8,10 +8,10 @@ export async function createEventService(eventData, organizerId) {
 
     const now = new Date();
 
-    if (new Date(date) <= now) throw new Error("La fecha del evento debe ser mayor a la fecha actual.");
-    if (price < 0) throw new Error("El precio debe ser mayor a 0.");
-    if (capacity <= 0) throw new Error("La capacidad debe ser mayor a 0.");
-    if (status == 'cancelled' || status == 'finished') throw new Error("El estado del evento no es valido.");
+    if (new Date(date) <= now) throw createError("La fecha del evento debe ser posterior a la fecha actual", 400);
+    if (price < 0) throw createError("El precio no puede ser negativo", 400);
+    if (capacity <= 0) throw createError("La capacidad debe ser mayor a 0", 400);
+    if (status === 'cancelled' || status === 'finished') throw createError("El estado del evento no es válido", 400);
 
     const event = await eventRepository.createEvent({
         title: title,
@@ -68,17 +68,17 @@ export async function getEventByIdService(eventId) {
 
 export async function updateEventByIdService(eventId, updateData) {
     const current = await eventRepository.getEventById(eventId);
-    if (current == null) throw new Error("Evento no encontrado");
-    if (current.status === 'cancelled') throw new Error("No se puede modificar un evento cancelado");
+    if (current == null) throw createError("Evento no encontrado", 404);
+    if (current.status === 'cancelled') throw createError("No se puede modificar un evento cancelado", 400);
 
     const { title, description, date, location, price, capacity, category } = updateData;
     const allowed = { title, description, date, location, price, capacity, category };
 
     Object.keys(allowed).forEach(k => allowed[k] === undefined && delete allowed[k]);
 
-    if (allowed.date && new Date(allowed.date) <= new Date()) throw new Error("La fecha del evento debe ser mayor a la fecha actual.");
-    if (allowed.price !== undefined && allowed.price < 0) throw new Error("El precio no puede ser negativo.");
-    if (allowed.capacity !== undefined && allowed.capacity <= 0) throw new Error("La capacidad debe ser mayor a 0.");
+    if (allowed.date && new Date(allowed.date) <= new Date()) throw createError("La fecha del evento debe ser posterior a la fecha actual", 400);
+    if (allowed.price !== undefined && allowed.price < 0) throw createError("El precio no puede ser negativo", 400);
+    if (allowed.capacity !== undefined && allowed.capacity <= 0) throw createError("La capacidad debe ser mayor a 0", 400);
 
     const event = await eventRepository.updateEvent(eventId, allowed);
     return event
@@ -93,11 +93,11 @@ export async function deleteEventByIdService(eventId) {
 
 export async function updateStatusEventService(eventId, status) {
     const validStatuses = ['draft', 'published', 'cancelled', 'finished'];
-    if (!validStatuses.includes(status)) throw new Error("El estado del evento no es válido");
+    if (!validStatuses.includes(status)) throw createError("El estado del evento no es válido", 400);
 
     const current = await eventRepository.getEventById(eventId);
-    if (current == null) throw new Error("Evento no encontrado");
-    if (current.status === 'cancelled') throw new Error("No se puede modificar un evento cancelado");
+    if (current == null) throw createError("Evento no encontrado", 404);
+    if (current.status === 'cancelled') throw createError("No se puede modificar un evento cancelado", 400);
 
     const event = await eventRepository.updateEvent(eventId, { status });
     return event
