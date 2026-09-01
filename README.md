@@ -48,8 +48,8 @@ npm run dev
 Si todo está bien vas a ver:
 
 ```
-Servidor escuchando en el puerto 8080
 Base de datos conectada
+Servidor escuchando en el puerto 8080
 ```
 
 ---
@@ -149,7 +149,8 @@ Base URL: `http://localhost:8080`
 | `GET` | `/:eid` | — | — | Detalle de un evento |
 | `POST` | `/` | ✅ | `organizer`, `admin` | Crea un evento |
 | `PUT` | `/:eid` | ✅ | dueño o `admin` | Actualiza un evento |
-| `PATCH` | `/:eid/status` | ✅ | dueño o `admin` | Cambia el estado |
+| `PATCH` | `/:eid/status` | ✅ | dueño o `admin` | Cambia el estado (`draft`/`published`/`cancelled`/`finished`) |
+| `DELETE` | `/:eid` | ✅ | dueño o `admin` | Elimina un evento |
 | `POST` | `/:eid/tickets` | ✅ | cualquiera | Inscribe al usuario autenticado |
 | `GET` | `/:eid/tickets` | ✅ | dueño o `admin` | Lista los inscriptos al evento |
 
@@ -170,7 +171,8 @@ Base URL: `http://localhost:8080`
 
 | Método | Ruta | Auth | Rol | Descripción |
 |---|---|---|---|---|
-| `GET` | `/my-tickets` | ✅ | — | Tickets propios, con datos del evento |
+| `GET` | `/my-tickets` | ✅ | — | Tickets propios, con populate de los datos del evento |
+| `GET` | `/:tid` | ✅ | dueño o `admin` | Detalle de un ticket |
 | `PATCH` | `/:tid/cancel` | ✅ | dueño o `admin` | Cancela el ticket (no lo elimina) |
 
 ---
@@ -179,6 +181,12 @@ Base URL: `http://localhost:8080`
 
 Los ejemplos usan `-c/-b cookies.txt` para que curl persista la cookie httpOnly
 entre llamadas.
+
+**Formato de respuesta.** Todos los endpoints responden con el mismo sobre:
+`status` (`"success"` / `"error"`), un `message` descriptivo, y `payload` con el
+recurso ya pasado por su DTO. La única excepción es el listado de eventos, que usa
+`data` más los campos de paginación al mismo nivel. Los ejemplos que siguen omiten
+el `message` por brevedad.
 
 ### Registro
 
@@ -352,12 +360,12 @@ src/
 ├── routes/        # definición de endpoints y encadenado de middlewares
 ├── controllers/   # coordinan request/response; no contienen lógica de negocio
 ├── services/      # reglas de negocio y validaciones
-├── repositories/  # capa de abstracción sobre los DAO
+├── repository/    # capa de abstracción sobre los DAO
 ├── dao/           # único lugar donde se importan los modelos de Mongoose
 ├── models/        # esquemas de Mongoose
 ├── dto/           # modelan la respuesta pública de cada entidad
 ├── middlewares/   # autorización por rol, propiedad del recurso y manejo de errores
-├── utils/         # hasheo, generación de códigos, clase AppError
+├── utils.js       # hasheo, generación de códigos y helper createError
 └── app.js         # composición de la aplicación
 ```
 
@@ -372,12 +380,17 @@ src/
 
 ### Manejo de errores
 
-Un middleware centralizado (`middlewares/error.middleware.js`) captura todos los
+Un middleware centralizado (`middlewares/error.middlewares.js`) captura todos los
 errores y responde con un formato uniforme:
 
 ```json
 { "status": "error", "message": "Descripción del problema" }
 ```
+
+Los services lanzan los errores con el helper `createError(mensaje, statusCode)` de
+`utils.js`, y los controllers los delegan con `next(error)` sin decidir códigos de
+estado por su cuenta. Las rutas inexistentes las captura un handler final que
+responde en el mismo formato, de modo que la API **nunca** devuelve HTML.
 
 | Código | Cuándo |
 |---|---|
@@ -387,6 +400,25 @@ errores y responde con un formato uniforme:
 | `404` | Evento, ticket o ruta inexistente |
 | `409` | Inscripción duplicada, sin cupo, evento no publicado o cancelado |
 | `500` | Error inesperado del servidor |
+
+---
+
+## Verificación del flujo completo
+
+Casos recorridos de punta a punta antes de la entrega:
+
+| # | Caso | Resultado esperado |
+|---|---|---|
+| 1 | Registro → login → `/current` → logout → `/current` | `201` → `200` → `200` → `200` → **`401`** |
+| 2 | `user` intenta crear un evento | **`403`** |
+| 3 | `organizer` crea evento → `user` se inscribe | `201` + email recibido + cupo descontado |
+| 4 | `user` se inscribe de nuevo al mismo evento | **`409`** inscripción duplicada |
+| 5 | `user` se inscribe a un evento sin cupo | **`409`** sin cupo disponible |
+| 6 | `user` cancela su ticket → se inscribe otro usuario | `200` → cupo liberado → `201` |
+| 7 | `organizer` intenta modificar un evento ajeno | **`403`** |
+| 8 | `admin` modifica el evento de otro organizador | **`200`** |
+| 9 | Respuestas de usuario, evento y ticket | ningún campo `password` |
+| 10 | `GET /api/events?status=published&page=2&limit=5` | estructura paginada completa |
 
 ---
 
