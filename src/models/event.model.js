@@ -5,7 +5,12 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 const eventSchema = new Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        trim: true
+    },
+    description: {
+        type: String,
+        trim: true
     },
     date: {
         type: Date,
@@ -13,13 +18,18 @@ const eventSchema = new Schema({
     },
     location: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
-    description: String,
-    price: Number,
+    price: {
+        type: Number,
+        required: true,
+        min: [0, 'El precio no puede ser negativo']
+    },
     capacity: {
-        type:Number,
-        required: true
+        type: Number,
+        required: true,
+        min: [1, 'La capacidad debe ser mayor a 0']
     },
     status: {
         type: String,
@@ -33,7 +43,8 @@ const eventSchema = new Schema({
     },
     category: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     }
 })
 

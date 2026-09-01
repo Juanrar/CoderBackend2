@@ -21,7 +21,10 @@ router.patch('/:eid/status',
     authorizeRoles("admin", "organizer"),
     authorizeEventOwnerOrAdmin,
     patchStatusEventById);
-router.delete('/:eid', passport.authenticate('current', { session: false }), authorizeRoles("admin", "organizer"), deleteEventById);
-
+router.delete('/:eid',
+    passport.authenticate('current', { session: false }),
+    authorizeRoles("admin", "organizer"),
+    authorizeEventOwnerOrAdmin,
+    deleteEventById);
 
 export default router;
