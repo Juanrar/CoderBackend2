@@ -21,6 +21,10 @@ app.use('/api/sessions', sessionsRouter)
 app.use('/api/events', eventsRouter)
 app.use('/api/tickets', ticketsRouter)
 
+app.use((req, res, next) => {
+    next(createError(`Ruta no encontrada: ${req.method} ${req.originalUrl}`, 404))
+})
+
 app.use(errorHandler)
 
 await connectDB();
