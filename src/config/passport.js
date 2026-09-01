@@ -28,7 +28,7 @@ async function registerCallback(req, username, password, done){
         return done(null, newUser);
     }catch(error){
         if(error.code === 11000){
-            return done(null, false, { message: 'El correo electrónico ya está registrado'});
+            return done(null, false, { message: 'El correo electrónico ya está registrado', statusCode: 409});
         }else{
             return done(error.message, false);
         }
