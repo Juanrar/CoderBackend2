@@ -4,7 +4,7 @@ import { createError } from '../utils.js';
 const eventRepository = new EventRepository();
 
 export async function createEventService(eventData, organizerId) {
-    const { title, date, location, price, capacity, status, category } = eventData;
+    const { title, date, location, price, capacity, status, category, description } = eventData;
 
     const now = new Date();
 
@@ -21,7 +21,8 @@ export async function createEventService(eventData, organizerId) {
         capacity: capacity,
         status: status,
         organizer: organizerId,
-        category: category
+        category: category,
+        description: description
     })
 
     return event
