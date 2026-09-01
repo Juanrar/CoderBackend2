@@ -3,12 +3,24 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 
 const eventSchema = new Schema({
-    title: String,
-    date: Date,
-    location: String,
+    title: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    location: {
+        type: String,
+        required: true
+    },
     description: String,
     price: Number,
-    capacity: Number,
+    capacity: {
+        type:Number,
+        required: true
+    },
     status: {
         type: String,
         enum: ['draft', 'published', 'cancelled', 'finished'],

@@ -70,7 +70,7 @@ export async function getEventByIdService(eventId) {
 export async function updateEventByIdService(eventId, updateData) {
     const current = await eventRepository.getEventById(eventId);
     if (current == null) throw createError("Evento no encontrado", 404);
-    if (current.status === 'cancelled') throw createError("No se puede modificar un evento cancelado", 400);
+    if (current.status === 'cancelled') throw createError("No se puede modificar un evento cancelado", 409);
 
     const { title, description, date, location, price, capacity, category } = updateData;
     const allowed = { title, description, date, location, price, capacity, category };
@@ -98,7 +98,7 @@ export async function updateStatusEventService(eventId, status) {
 
     const current = await eventRepository.getEventById(eventId);
     if (current == null) throw createError("Evento no encontrado", 404);
-    if (current.status === 'cancelled') throw createError("No se puede modificar un evento cancelado", 400);
+    if (current.status === 'cancelled') throw createError("No se puede modificar un evento cancelado", 409);
 
     const event = await eventRepository.updateEvent(eventId, { status });
     return event

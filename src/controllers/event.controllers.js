@@ -23,7 +23,7 @@ export async function getEvents(req, res, next) {
             totalPages
         });
     } catch (error) {
-        res.status(500).json({ status: 'error', message: error.message });
+        next(error);
     }
 }
 

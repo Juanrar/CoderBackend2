@@ -1,14 +1,10 @@
 import { env } from '../config/env.js';
 import jwt from 'jsonwebtoken';
+import { UserDTO } from '../dto/index.js';
 
 
 export async function register(req, res, next) {
-    const sessionData = {
-        id: req.user._id,
-        email: req.user.email,
-        role: req.user.role
-    };
-    res.status(201).json({ message: 'Usuario registrado exitosamente', user: sessionData });
+    res.status(201).json({ message: 'Usuario registrado exitosamente', user: new UserDTO(req.user) });
 }
 
 export async function login(req, res, next) {
@@ -23,21 +19,25 @@ export async function login(req, res, next) {
         const token = jwt.sign(sessionData, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN });
         res.cookie('authToken', token, {
             httpOnly: true,
-            secure: true,
+            secure: env.NODE_ENV === 'production',
             sameSite: 'lax',
             maxAge: env.JWT_COOKIE_EXPIRES_IN * 1000
         })
-        res.status(200).json({ message: 'Inicio de sesión exitoso', token: token, sessionData });
+        res.status(200).json({ message: 'Inicio de sesión exitoso', token: new UserDTO(req.user) });
     } catch (error) {
-        res.status(401).json({ error: error.message });
+        next(error);
     }
 }
 
 export async function logout(req, res, next) {
-    res.clearCookie('authToken');
+    res.clearCookie('authToken',{
+        httpOnly: true,
+        secure: env.NODE_ENV === 'production',
+        sameSite: 'lax'
+    });
     res.status(200).json({ message: 'Cierre de sesión exitoso' });
 }
 
 export async function getCurrentUser(req, res, next) {
-    res.status(200).json({ message: 'Usuario autenticado', user: req.user });
+    res.status(200).json({ message: 'Usuario autenticado', user: new UserDTO(req.user) });
 }

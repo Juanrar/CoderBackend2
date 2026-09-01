@@ -25,7 +25,5 @@ app.use('/api/tickets', ticketsRouter)
 
 app.use(errorHandler)
 
-app.listen(env.PORT, () => {
-    connectDB()
-    console.log(`Servidor escuchando en el puerto ${env.PORT}`)
-})
+await connectDB();
+app.listen(env.PORT, () => console.log(`Servidor escuchando en el puerto ${env.PORT}`));
